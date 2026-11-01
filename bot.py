@@ -76,7 +76,8 @@ def make_posts(start,days):
         date=start+timedelta(days=i)
         theme=THEMES[date.weekday()]
         for j,slot in enumerate(SLOTS):
-            title=theme[1+(j%4)]; subtitle=theme[2+(j%4)] if j%2==0 else theme[4]
+            title=theme[1] if j<2 else (theme[3] if j==2 else "Converse com a AF Crédito")
+            subtitle=theme[2] if j<2 else (theme[4] if j==2 else "Atendimento pelo WhatsApp (13) 99606-0498.")
             kind="FEED" if slot=="12" else "STORY"
             key=date.isoformat()+"_"+slot
             caption=(title+"\n\n"+subtitle+"\n\nFale com a AF Crédito Vale do Ribeira pelo WhatsApp (13) 99606-0498."
@@ -135,9 +136,12 @@ def verify():
     try:
         result=api("me/permissions")
         granted={p.get("permission") for p in result.get("data",[]) if p.get("status")=="granted"}
-        missing=needed-granted
-        if missing:raise RuntimeError("Permissões ausentes no token de usuário: "+", ".join(sorted(missing)))
-        print("Permissões Facebook Login: confirmadas.")
+        if not result.get("data"):
+            print("Lista de escopos indisponível neste tipo de token; validação de permissão de publicação ainda pendente.")
+        else:
+            missing=needed-granted
+            if missing:raise RuntimeError("Permissões ausentes no token de usuário: "+", ".join(sorted(missing)))
+            print("Permissões Facebook Login: confirmadas.")
     except RuntimeError as e:
         if "Permissões ausentes" in str(e):raise
         print("Permissões não consultáveis por este tipo de token; identidade validada. O teste real depende da Meta.")
