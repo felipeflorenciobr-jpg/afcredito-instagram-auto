@@ -1,0 +1,73 @@
+name: Instagram AF Crédito — conferir ou publicar
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'validate (sem post), dry-run (sem post), publish (post)'
+        type: choice
+        options: ['validate','dry-run','publish']
+        required: true
+        default: 'validate'
+      slot:
+        description: 'Horário do conteúdo'
+        type: choice
+        options: ['09','12','15','19']
+        default: '12'
+      date:
+        description: 'Data YYYY-MM-DD (vazio = hoje)'
+        required: false
+  schedule:
+    - cron: '14 12 * * *'
+    - cron: '14 15 * * *'
+    - cron: '14 18 * * *'
+    - cron: '14 22 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: af-credito-content
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Executar verificação ou publicação
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          PUBLISH_ENABLED: ${{ vars.PUBLISH_ENABLED }}
+          GRAPH_API_VERSION: v26.0
+          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+          GH_SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ inputs.mode }}
+          SLOT: ${{ inputs.slot }}
+          DAY: ${{ inputs.date }}
+        shell: bash
+        run: |
+          if [ -n "$GH_SCHEDULE" ]; then
+            if [ "$PUBLISH_ENABLED" != "true" ]; then echo "Publicação desativada; nenhuma ação."; exit 0; fi
+            MODE=publish
+            case "$GH_SCHEDULE" in
+              '14 12 * * *') SLOT=09 ;;
+              '14 15 * * *') SLOT=12 ;;
+              '14 18 * * *') SLOT=15 ;;
+              '14 22 * * *') SLOT=19 ;;
+            esac
+          fi
+          if [ "${MODE:-validate}" = "publish" ] && [ "$PUBLISH_ENABLED" != "true" ]; then
+            echo "Bloqueado: variável PUBLISH_ENABLED não é true."; exit 1
+          fi
+          python bot.py "${MODE:-validate}" --slot "${SLOT:-12}" ${DAY:+--date "$DAY"}
+      - name: Registrar mídia publicada
+        if: success()
+        run: |
+          git config user.name 'AF Crédito Automação'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/published.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m 'Registrar postagem no Instagram'
+            git push
+          fi

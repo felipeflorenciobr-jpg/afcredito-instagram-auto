@@ -1,0 +1,42 @@
+name: Preparar calendário e artes
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: 'Data inicial YYYY-MM-DD (vazio = amanhã)'
+        required: false
+      days:
+        description: 'Quantidade de dias'
+        required: false
+        default: '14'
+  schedule:
+    - cron: '17 10 * * 0'
+permissions:
+  contents: write
+concurrency:
+  group: af-credito-content
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Gerar imagens e calendário (sem publicar)
+        env:
+          START: ${{ inputs.start }}
+          DAYS: ${{ inputs.days }}
+        run: |
+          python bot.py generate --days "${DAYS:-14}" ${START:+--start "$START"}
+      - name: Atualizar arquivos hospedados
+        run: |
+          git config user.name 'AF Crédito Automação'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/media docs/content.json docs/calendario.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preparar artes e calendário'
+            git push
+          fi
