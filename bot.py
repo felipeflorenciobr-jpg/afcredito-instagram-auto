@@ -19,7 +19,7 @@ THEMES=[
  ("CONTA DE LUZ","Crédito pela conta de luz","Entenda a modalidade antes de contratar.","Minha conta de energia é elegível?","A disponibilidade depende das regras do parceiro."),
  ("INSS","Crédito para beneficiários do INSS","Consulte margem, prazo e custo efetivo total.","Como consultar minha margem?","Saiba quais dados são necessários para análise."),
  ("SERVIDORES","Crédito para servidores públicos","Condições variam conforme o convênio.","Meu convênio é atendido?","Solicite informações para sua situação."),
- ("FGTS","Modalidades de crédito com FGTS","Consulte as regras atuais e a elegibilidade.","Como funciona a análise do FGTS?","As condições dependem da instituição financeira."),
+ ("ORIENTAÇÃO","O que analisar antes de solicitar crédito?","Compare custo efetivo total, parcelas e prazo.","Quais informações preciso para simular?","A equipe da AF Crédito orienta você pelo WhatsApp."),
  ("EDUCAÇÃO FINANCEIRA","Antes de contratar crédito","Compare o custo efetivo total e o prazo.","O que é CET?","É o custo total anual expresso em percentual."),
  ("AF CRÉDITO","Atendimento AF Vale do Ribeira","Informações claras para uma escolha consciente.","Tem dúvidas sobre crédito?","Converse com a equipe pelo WhatsApp.")
 ]
@@ -157,6 +157,8 @@ def publish(day,slot,dry_run=False):
     items=json.loads((DOCS/"content.json").read_text(encoding="utf-8"))
     post=next((p for p in items if p["key"]==key),None)
     if not post:raise RuntimeError("Arte ausente: "+key)
+    if any("fgts" in str(post.get(field,"")).lower() for field in ("theme","title","subtitle","caption")):
+        raise RuntimeError("BLOQUEADO: conteúdo sobre FGTS não autorizado para publicação.")
     history=DOCS/"published.json"
     done=json.loads(history.read_text(encoding="utf-8")) if history.exists() else {}
     if key in done:
