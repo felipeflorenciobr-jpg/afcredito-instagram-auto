@@ -1,0 +1,43 @@
+name: Campanha Conta de Luz — publicação única
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'check só verifica; publish publica no feed e nos Stories'
+        type: choice
+        required: true
+        default: check
+        options: [check, publish]
+permissions:
+  contents: write
+concurrency:
+  group: conta-de-luz-postagem-unica
+  cancel-in-progress: false
+jobs:
+  campanha:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - name: Checar ou publicar com a Meta
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          GRAPH_API_VERSION: v26.0
+          MODE: ${{ inputs.mode }}
+        run: python campanha_conta_luz.py --mode "$MODE"
+      - name: Salvar IDs publicados (mesmo em erro parcial)
+        if: always()
+        run: |
+          if [ -f docs/campanha-conta-luz-publicadas.json ]; then
+            git config user.name 'AF Crédito Automação'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add docs/campanha-conta-luz-publicadas.json
+            if ! git diff --cached --quiet; then
+              git commit -m 'Registrar publicações pontuais da campanha Conta de Luz'
+              git push
+            fi
+          fi
