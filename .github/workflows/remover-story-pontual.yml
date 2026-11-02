@@ -1,0 +1,41 @@
+name: Remover somente o Story da campanha Conta de Luz
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  remover-story:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tentar remover Story específico
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os, urllib.request, urllib.error, json
+          token = os.environ.get("META_ACCESS_TOKEN", "").strip()
+          if not token:
+              raise SystemExit("FALHA: o token não está configurado.")
+          root="https://graph.facebook.com/v26.0/"
+          def request(path,method="GET"):
+              req=urllib.request.Request(root+path,method=method,headers={"Authorization":"Bearer "+token})
+              try:
+                  with urllib.request.urlopen(req,timeout=25) as res:
+                      return res.status, json.loads(res.read().decode())
+              except urllib.error.HTTPError as err:
+                  raw=err.read().decode(errors="replace").replace(token,"[OCULTO]")
+                  return err.code, raw[:700]
+          status, account=request("17841471091739370?fields=id,username")
+          if status!=200 or not isinstance(account,dict) or account.get("username","").lower()!="afcredito.valedoribeira":
+              raise SystemExit("BLOQUEADO: conta divergente, nenhum Story removido.")
+          story_id="18082572527550647"
+          status, answer=request(story_id,method="DELETE")
+          if status==200 and isinstance(answer,dict) and answer.get("success") is True:
+              print("STORY_EXCLUIDO_META",story_id)
+          else:
+              print("STORY_NAO_EXCLUIDO: Graph API retornou HTTP",status,str(answer)[:700])
+              raise SystemExit(2)
+          PY
