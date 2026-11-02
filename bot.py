@@ -126,12 +126,13 @@ def find_account():
     raise RuntimeError("Não foi possível localizar o Instagram da AF pela Página. Configure IG_USER_ID no GitHub Secrets e confirme a Página conectada.")
 def verify():
     ig_id=find_account()
-    account=api(ig_id+"?fields=id,username,account_type")
+    # No Facebook Login, o campo account_type pode não existir para este nó/versão.
+    # A identidade da conta deve ser verificada por id e username, sem supor tipo.
+    account=api(ig_id+"?fields=id,username")
     username=account.get("username","").lower().lstrip("@")
     if username!=NAME:raise RuntimeError("BLOQUEADO: token/ID pertence a @"+username+", não a @"+NAME)
-    if account.get("account_type","").upper()!="BUSINESS":
-        raise RuntimeError("Conta deve ser Instagram Business para publicar Stories pela API.")
-    print("Instagram correto: @"+username+" | tipo Business | ID "+str(account.get("id")))
+    print("Instagram correto: @"+username+" | ID "+str(account.get("id")))
+    print("Observação: Stories exigem conta Business; a consulta de identidade não confirma esse requisito.")
     needed={"instagram_basic","instagram_content_publish","pages_show_list","pages_read_engagement"}
     try:
         result=api("me/permissions")
