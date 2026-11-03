@@ -1,0 +1,93 @@
+name: Novembro 2026 - campanha curada AF
+on:
+  push:
+    paths:
+      - 'campanha_novembro.py'
+      - 'campanhas/novembro_2026.json'
+      - 'campanhas/assets_novembro_2026/**'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Preparar, validar, testar ou publicar'
+        type: choice
+        options: [prepare, validate, dry-run, publish]
+        default: validate
+        required: true
+      date:
+        description: 'Data YYYY-MM-DD; vazio para hoje'
+        required: false
+      slot:
+        type: choice
+        options: ['12', '19']
+        default: '12'
+  schedule:
+    - cron: '14 15 * * *'
+    - cron: '14 22 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: af-credito-content
+  cancel-in-progress: false
+jobs:
+  prepare:
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'prepare')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Preparar e validar, sem publicar
+        run: |
+          python campanha_novembro.py prepare
+          python campanha_novembro.py validate
+      - name: Publicar as imagens no GitHub Pages
+        run: |
+          git config user.name 'AF Crédito Automação'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/media/nov2026_*.jpg docs/nov2026_calendar.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preparar imagens curadas de novembro'
+            git push
+          fi
+  publication:
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode != 'prepare')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Conferir ou publicar conforme o calendário
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          PUBLISH_ENABLED: ${{ vars.PUBLISH_ENABLED }}
+          CAMPANHA_NOVEMBRO_APPROVED: ${{ vars.CAMPANHA_NOVEMBRO_APPROVED }}
+          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+          GH_SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ inputs.mode }}
+          DATE: ${{ inputs.date }}
+          SLOT: ${{ inputs.slot }}
+        shell: bash
+        run: |
+          if [ -n "$GH_SCHEDULE" ]; then
+            MODE=publish
+            case "$GH_SCHEDULE" in
+              '14 15 * * *') SLOT=12 ;;
+              '14 22 * * *') SLOT=19 ;;
+            esac
+          fi
+          python campanha_novembro.py "${MODE:-validate}" --slot "${SLOT:-12}" ${DATE:+--date "$DATE"}
+      - name: Salvar ID das publicações confirmadas
+        if: success()
+        run: |
+          git config user.name 'AF Crédito Automação'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/nov2026_published.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m 'Registrar publicação de novembro e evitar repetição'
+            git push
+          fi
