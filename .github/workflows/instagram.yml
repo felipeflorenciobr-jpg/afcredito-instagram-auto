@@ -16,11 +16,6 @@ on:
       date:
         description: 'Data YYYY-MM-DD (vazio = hoje)'
         required: false
-  schedule:
-    - cron: '14 12 * * *'
-    - cron: '14 15 * * *'
-    - cron: '14 18 * * *'
-    - cron: '14 22 * * *'
 permissions:
   contents: write
 concurrency:
