@@ -9,8 +9,6 @@ on:
         description: 'Quantidade de dias'
         required: false
         default: '14'
-  schedule:
-    - cron: '17 10 * * 0'
 permissions:
   contents: write
 concurrency:
