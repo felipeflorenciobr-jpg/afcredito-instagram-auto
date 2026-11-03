@@ -1,0 +1,43 @@
+name: Publicar Story CLT — publicação única
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'check apenas valida; publish publica o Story CLT'
+        type: choice
+        options: [check, publish]
+        required: true
+        default: check
+permissions:
+  contents: write
+concurrency:
+  group: story-clt-publicacao-unica
+  cancel-in-progress: false
+jobs:
+  story-clt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - name: Validar ou publicar o Story CLT
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          GRAPH_API_VERSION: v26.0
+          MODE: ${{ inputs.mode }}
+        run: python story_clt_uma_vez.py --mode "$MODE"
+      - name: Registrar ID da publicação
+        if: always()
+        run: |
+          if [ -f docs/clt-story-2026-11-03-published.json ]; then
+            git config user.name 'AF Crédito Automação'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            git add docs/clt-story-2026-11-03-published.json
+            if ! git diff --cached --quiet; then
+              git commit -m 'Registrar ID do Story CLT publicado'
+              git push
+            fi
+          fi
