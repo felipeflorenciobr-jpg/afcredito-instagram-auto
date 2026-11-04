@@ -37,7 +37,9 @@ def prepare():
 def validate():
     import hashlib
     from collections import Counter
+    from premium_campaign import validate_diversity
     items = posts()
+    validate_diversity(items)
     days = Counter(x['date'] for x in items)
     if len(items) != 54 or len(days) != 27 or any(n != 2 for n in days.values()):
         raise RuntimeError('Calendário deve conter 27 pares feed/Story')

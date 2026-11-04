@@ -45,6 +45,7 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Preparar e validar, sem publicar
         run: |
+          python -m unittest test_campaign.py
           python campanha_novembro.py prepare
           python campanha_novembro.py validate
       - name: Publicar as imagens no GitHub Pages

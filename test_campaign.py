@@ -44,4 +44,31 @@ class PublicationSafetyTests(unittest.TestCase):
             campaign.publish('2026-11-04','10',dry_run=True)
             verify.assert_not_called()
 
+class VisualDiversityTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory()
+        self.root=Path(self.tmp.name)
+        (self.root/'campanhas').mkdir()
+        for name in ('first.jpg','alias.jpg'):
+            (self.root/'campanhas'/name).write_bytes(b'same master image')
+        self.addCleanup(self.tmp.cleanup)
+
+    def test_renaming_an_image_does_not_hide_a_repeated_feed(self):
+        from premium_campaign import validate_diversity
+        items=[{'date':'2026-11-04','type':'FEED','artwork':'first.jpg'},
+               {'date':'2026-11-20','type':'FEED','artwork':'alias.jpg'}]
+        with self.assertRaisesRegex(ValueError,'Arte repetida'):validate_diversity(items,self.root)
+
+    def test_feed_and_story_cannot_reuse_an_image_in_the_same_week(self):
+        from premium_campaign import validate_diversity
+        items=[{'date':'2026-11-04','type':'FEED','artwork':'first.jpg'},
+               {'date':'2026-11-10','type':'STORY','artwork':'alias.jpg'}]
+        with self.assertRaisesRegex(ValueError,'12 dias'):validate_diversity(items,self.root)
+
+    def test_reuse_in_the_other_format_after_twelve_days_is_allowed(self):
+        from premium_campaign import validate_diversity
+        items=[{'date':'2026-11-04','type':'FEED','artwork':'first.jpg'},
+               {'date':'2026-11-16','type':'STORY','artwork':'alias.jpg'}]
+        validate_diversity(items,self.root)
+
 if __name__=='__main__':unittest.main()

@@ -5,7 +5,7 @@
 ## Publicação automatizada vigente
 - 04 a 30/11: 1 post no feed às **10h14** + 1 Story premium às **18h14** todos os dias (horário de São Paulo).
 - 27 feeds e 27 Stories — calendário aprovado tecnicamente em `campanhas/novembro_2026.json`.
-- Artes fotográficas revisadas e oficiais são empacotadas por `premium_campaign.py`; as versões de Story preservam a composição inteira, sem recortar texto nem esticar fotografias. Sete novos masters e dez masters oficiais ocupam os 54 espaços.
+- Artes fotográficas revisadas e oficiais são empacotadas por `premium_campaign.py`; as versões de Story preservam a composição inteira, sem recortar texto nem esticar fotografias. 29 artes-base ocupam os 54 espaços: 27 imagens distintas por formato e intervalo mínimo de 12 dias no reaproveitamento entre feed e Story. Oito novas variações foram adicionadas na revisão de diversidade.
 - Publicação real permanece condicionada às variáveis `PUBLISH_ENABLED=true` e `CAMPANHA_NOVEMBRO_APPROVED=true`. A liberação segue a autorização do proprietário para execução automática deste calendário após validação.
 - Página de aprovação: https://felipeflorenciobr-jpg.github.io/afcredito-instagram-auto/previa-novembro-2026.html
 

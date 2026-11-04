@@ -4,11 +4,33 @@ import hashlib
 import html
 import json
 from pathlib import Path
+from datetime import date
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent
 NAVY = '#061c37'
 RED = '#ed001d'
+
+def validate_diversity(items, root=ROOT):
+    """Detecta repetição pelo conteúdo da imagem, mesmo sob outro nome."""
+    seen={}
+    for p in items:
+        path=(root/'campanhas'/p['artwork']).resolve()
+        if not path.is_relative_to(root/'campanhas') or not path.is_file():
+            raise ValueError('Arte ausente ou fora da campanha')
+        digest=hashlib.sha256(path.read_bytes()).hexdigest()
+        if p.get('source_sha256') and p['source_sha256']!=digest:
+            raise ValueError('Master alterado depois da revisão')
+        previous=seen.setdefault(digest,[])
+        for q in previous:
+            if q['type']==p['type']:
+                raise ValueError('Arte repetida em '+p['type']+': '+q['date']+' / '+p['date'])
+            gap=abs((date.fromisoformat(p['date'])-date.fromisoformat(q['date'])).days)
+            if gap<12:
+                raise ValueError('Reaproveitamento entre formatos exige intervalo de 12 dias')
+        if p.get('theme')=='DATA INSTITUCIONAL' and p['date'] not in ('2026-11-15','2026-11-20'):
+            raise ValueError('Arte de data institucional fora da data')
+        previous.append(p)
 
 def font(size, bold=False):
     suffix = '-Bold' if bold else ''
@@ -54,7 +76,9 @@ def write_gallery(items):
     target = ROOT/'docs/previa-novembro-2026.html'
     # JSON vem do mesmo calendário usado para publicar, sem cópia manual divergente.
     template = (ROOT/'gallery_template.html').read_text(encoding='utf-8')
-    target.write_text(template.replace('__POSTS__',json.dumps(items,ensure_ascii=False).replace('</','<\\/')),encoding='utf-8')
+    content=template.replace('__POSTS__',json.dumps(items,ensure_ascii=False).replace('</','<\\/'))
+    content=content.replace('__OFFICIAL_COUNT__',str(sum(p['source']=='official' for p in items)))
+    target.write_text(content,encoding='utf-8')
     (ROOT/'docs/index.html').write_text('<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=previa-novembro-2026.html"><title>AF Crédito — Novembro</title><a href="previa-novembro-2026.html">Abrir calendário de novembro</a></html>\n',encoding='utf-8')
     with (ROOT/'docs/calendario_novembro_2026.csv').open('w',encoding='utf-8-sig',newline='') as f:
         out=csv.writer(f,delimiter=';')
@@ -63,6 +87,7 @@ def write_gallery(items):
             out.writerow([p['date'],p['slot']+':14',p['type'],p['theme'],p['creative_title'],p['source'],'media/nov2026_'+p['date']+'_'+p['slot']+'.jpg',p['caption']])
 
 def prepare(items):
+    validate_diversity(items)
     media = ROOT/'docs/media'
     media.mkdir(exist_ok=True,parents=True)
     for p in items:

@@ -1,13 +1,10 @@
-# Novembro 2026 — versão premium revisada
+# Novembro 2026 — revisão de diversidade visual
 
-54 publicações entre 04 e 30/11/2026, em America/Sao_Paulo: 27 feeds às 10h14 e 27 Stories às 18h14.
+54 publicações entre 04 e 30/11: feed às 10h14 e Story às 18h14, horário de Brasília.
 
-34 espaços usam sete novas artes fotográficas; 20 usam dez artes oficiais da franquia. São 17 artes-base, reutilizadas em temas recorrentes com legendas próprias. Os Stories preservam a imagem completa do feed em uma tela 9:16, com WhatsApp em área segura.
-
-Validação local: dimensões das 54 imagens, hashes, 27 pares sem horários duplicados, legendas sem escapes, correspondência da galeria com o plano e testes de prevenção de repetição após resposta incerta. Nenhum post foi disparado por essas verificações.
-
-Materiais fora do escopo comercial (FGTS e BPC/LOAS) permanecem apenas nos arquivos históricos e não estão no calendário ativo. Histórico anterior e registros de publicação preservados.
-
-O agendamento cobre novembro. O calendário contém somente datas de 2026; horários do GitHub Actions podem sofrer atraso de execução.
-
-A publicação automática depende das configurações PUBLISH_ENABLED e CAMPANHA_NOVEMBRO_APPROVED e da autenticação Meta. O resultado da verificação remota é registrado no workflow de validação.
+- 27 imagens diferentes no feed e 27 nos Stories.
+- 29 artes-base no total. Há reaproveitamento entre formatos, com intervalo mínimo de 13 dias; nenhuma imagem se repete no mesmo formato.
+- Oito novas peças foram criadas nesta revisão, com cenas e mensagens diferentes para INSS, conta de luz, servidores e seguro empresarial. Materiais oficiais anteriores de CLT e consórcio ampliam a variedade.
+- Feed e Story do mesmo dia têm imagens diferentes. Artes institucionais ficam em 15 e 20 de novembro.
+- A validação compara o conteúdo dos arquivos, além das datas, tamanhos, hashes e sincronização da galeria. Testes cobrem arquivos renomeados e repetição entre formatos em intervalo curto.
+- Horários, histórico de publicações e liberação automática foram preservados. Nenhuma postagem é enviada durante geração ou validação.
