@@ -112,12 +112,11 @@ def render_story(item, filename):
     w,h=1080,1920
     code,label,keyword,accent=category(item)
     im=Image.new("RGB",(w,h))
-    pixels=im.load()
+    backdrop=ImageDraw.Draw(im)
     for yy in range(h):
         t=yy/(h-1)
         base=(int(7+7*t),int(24+10*t),int(47+14*t))
-        for xx in range(w):
-            pixels[xx,yy]=base
+        backdrop.line((0,yy,w,yy),fill=base,width=1)
     d=ImageDraw.Draw(im)
     # Painel superior, halos e curvas premium discretas.
     glow=Image.new("RGBA",(w,h),(0,0,0,0));g=ImageDraw.Draw(glow)
@@ -175,7 +174,12 @@ def render_story(item, filename):
     # CTA forte e específico, dentro da área segura para UI do Instagram.
     d.rounded_rectangle((72,1433,1008,1689),radius=39,fill=(239,244,249,255))
     d.rounded_rectangle((86,1452,994,1554),radius=28,fill=(*RED,255))
-    d.text((130,1470),"CONSULTE PELO WHATSAPP",font=font(45,True),fill=WHITE)
+    cta=("FALE COM A NOSSA EQUIPE" if code=="INSTITUCIONAL"
+         else "ENVIE '"+keyword+"' NO WHATSAPP")
+    for ctasize in (43,40,37,34,31):
+        ctaf=font(ctasize,True)
+        if d.textbbox((0,0),cta,font=ctaf)[2]<820:break
+    d.text((130,1480),cta,font=ctaf,fill=WHITE)
     d.text((129,1586),"(13) 99606-0498",font=font(63,True),fill=NAVY)
     d.text((73,1740),"@afcredito.valedoribeira",font=font(28,True),fill=MUTED)
     if code!="INSTITUCIONAL":
