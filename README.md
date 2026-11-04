@@ -2,9 +2,15 @@
 
 Criador de artes JPG por templates e publicação na Graph API com **Facebook Login**. Repositório público, sem tokens no código. A publicação começa **desativada**.
 
-## O que faz
-- 4 publicações por dia, horário America/Sao_Paulo: **09h14, 12h14, 15h14, 19h14**.
-- 3 Stories (09/15/19) e 1 arte de feed (12).
+## Campanha vigente — 4 a 30 de novembro de 2026
+- **Duas publicações diárias**: feed às **10h14** e Story às **18h14** (America/Sao_Paulo).
+- **54 publicações no total**: 27 de feed e 27 Stories.
+- Calendário curado em `campanhas/novembro_2026.json`; imagens em `docs/media/nov2026_*.jpg`.
+- A publicação efetiva exige **`PUBLISH_ENABLED=true` e `CAMPANHA_NOVEMBRO_APPROVED=true`** nas variáveis do GitHub Actions. Sem as duas, só prepara e valida.
+- O fluxo antigo de 4 publicações diárias está sem acionamento automático.
+
+## Ferramentas disponíveis
+- O gerador legado consegue preparar quatro horários por dia, mas **não está programado para publicação automática**.
 - Temas por dia da semana: CLT, conta de luz, INSS, servidor, FGTS, educação financeira e atendimento.
 - Imagens criadas com Pillow, gratuitamente, e disponibilizadas por GitHub Pages.
 - Bloqueio de identidade: somente Instagram **@afcredito.valedoribeira** e conta BUSINESS.
