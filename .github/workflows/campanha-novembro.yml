@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'campanha_novembro.py'
+      - 'story_premium.py'
+      - 'campanhas/brand/**'
       - '.github/workflows/campanha-novembro.yml'
       - 'campanhas/novembro_2026.json'
       - 'campanhas/assets_novembro_2026/**'
