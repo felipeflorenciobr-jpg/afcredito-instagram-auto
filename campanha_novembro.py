@@ -114,7 +114,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=("prepare", "validate", "dry-run", "publish"))
     parser.add_argument("--date", default=datetime.now(TZ).date().isoformat())
-    parser.add_argument("--slot", choices=("12", "19"), default="12")
+    parser.add_argument("--slot", choices=("10", "18"), default="10")
     args = parser.parse_args()
     try:
         if args.mode == "prepare":
