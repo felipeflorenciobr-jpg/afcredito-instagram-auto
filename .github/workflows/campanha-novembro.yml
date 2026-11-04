@@ -19,11 +19,11 @@ on:
         required: false
       slot:
         type: choice
-        options: ['12', '19']
-        default: '12'
+        options: ['10', '18']
+        default: '10'
   schedule:
-    - cron: '14 15 * * *'
-    - cron: '14 22 * * *'
+    - cron: '14 13 * * *'
+    - cron: '14 21 * * *'
 permissions:
   contents: write
 concurrency:
@@ -77,11 +77,11 @@ jobs:
           if [ -n "$GH_SCHEDULE" ]; then
             MODE=publish
             case "$GH_SCHEDULE" in
-              '14 15 * * *') SLOT=12 ;;
-              '14 22 * * *') SLOT=19 ;;
+              '14 13 * * *') SLOT=10 ;;
+              '14 21 * * *') SLOT=18 ;;
             esac
           fi
-          python campanha_novembro.py "${MODE:-validate}" --slot "${SLOT:-12}" ${DATE:+--date "$DATE"}
+          python campanha_novembro.py "${MODE:-validate}" --slot "${SLOT:-10}" ${DATE:+--date "$DATE"}
       - name: Salvar ID das publicações confirmadas
         if: success()
         run: |
