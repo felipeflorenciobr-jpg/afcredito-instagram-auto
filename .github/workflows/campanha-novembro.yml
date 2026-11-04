@@ -6,6 +6,8 @@ on:
       - 'premium_campaign.py'
       - 'gallery_template.html'
       - 'campanhas/premium_novembro_2026/**'
+      - 'campanhas/terceiro_horario_2026/**'
+      - 'test_campaign.py'
       - 'campanhas/brand/**'
       - '.github/workflows/campanha-novembro.yml'
       - 'campanhas/novembro_2026.json'
@@ -23,10 +25,11 @@ on:
         required: false
       slot:
         type: choice
-        options: ['10', '18']
+        options: ['10', '14', '18']
         default: '10'
   schedule:
     - cron: '14 13 * 11 *'
+    - cron: '14 17 * 11 *'
     - cron: '14 21 * 11 *'
 permissions:
   contents: write
@@ -83,6 +86,7 @@ jobs:
             MODE=publish
             case "$GH_SCHEDULE" in
               '14 13 * 11 *') SLOT=10 ;;
+              '14 17 * 11 *') SLOT=14 ;;
               '14 21 * 11 *') SLOT=18 ;;
             esac
           fi

@@ -1,10 +1,17 @@
-# Novembro 2026 — revisão de diversidade visual
+# Novembro 2026 — três publicações por dia
 
-54 publicações entre 04 e 30/11: feed às 10h14 e Story às 18h14, horário de Brasília.
+81 publicações entre 04 e 30/11/2026, horário de Brasília (America/Sao_Paulo).
 
-- 27 imagens diferentes no feed e 27 nos Stories.
-- 29 artes-base no total. Há reaproveitamento entre formatos, com intervalo mínimo de 13 dias; nenhuma imagem se repete no mesmo formato.
-- Oito novas peças foram criadas nesta revisão, com cenas e mensagens diferentes para INSS, conta de luz, servidores e seguro empresarial. Materiais oficiais anteriores de CLT e consórcio ampliam a variedade.
-- Feed e Story do mesmo dia têm imagens diferentes. Artes institucionais ficam em 15 e 20 de novembro.
-- A validação compara o conteúdo dos arquivos, além das datas, tamanhos, hashes e sincronização da galeria. Testes cobrem arquivos renomeados e repetição entre formatos em intervalo curto.
-- Horários, histórico de publicações e liberação automática foram preservados. Nenhuma postagem é enviada durante geração ou validação.
+| Horário | Formato | Quantidade |
+|---|---|---:|
+| 10h14 | Feed | 27 |
+| 14h14 | Feed extra | 27 |
+| 18h14 | Story | 27 |
+
+As 27 extras são exclusivas: não repetem nenhuma arte dos outros horários. São 54 imagens diferentes no feed e 27 nos Stories. As 54 publicações aprovadas anteriormente foram mantidas integralmente. O reaproveitamento entre os formatos já presente na versão aprovada continua separado por pelo menos 13 dias; nenhuma peça extra participa desse reaproveitamento.
+
+Foram criadas 20 novas artes e selecionadas sete imagens ainda não usadas no calendário. Há 56 artes-base distintas nos 81 espaços.
+
+Validação: dimensões 1080×1350 para os 54 feeds e 1080×1920 para os 27 Stories; hashes de arquivos e masters; três horários completos por dia; comparação de imagem pelo conteúdo para bloquear cópias renomeadas; legendas e galeria sincronizadas. Os testes também verificam a proteção contra repetição após uma resposta incerta da Meta.
+
+A automação mantém o histórico de publicações e acrescenta a execução das 14h14. Gerar, validar e conferir as mídias não envia postagens. O calendário contém apenas datas de novembro de 2026.

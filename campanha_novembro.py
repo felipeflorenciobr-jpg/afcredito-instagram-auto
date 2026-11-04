@@ -41,10 +41,13 @@ def validate():
     items = posts()
     validate_diversity(items)
     days = Counter(x['date'] for x in items)
-    if len(items) != 54 or len(days) != 27 or any(n != 2 for n in days.values()):
-        raise RuntimeError('Calendário deve conter 27 pares feed/Story')
+    if len(items) != 81 or len(days) != 27 or any(n != 3 for n in days.values()):
+        raise RuntimeError('Calendário deve conter 27 dias com três publicações')
+    for day in days:
+        if {p['slot'] for p in items if p['date']==day} != {'10','14','18'}:
+            raise RuntimeError('O dia deve ter os horários 10h14, 14h14 e 18h14')
     for item in posts():
-        if item['slot'] != ('18' if item['type'] == 'STORY' else '10'):
+        if item['type'] != ('STORY' if item['slot']=='18' else 'FEED'):
             raise RuntimeError('Formato incompatível com horário')
         if not item.get('artwork') or not item.get('media_sha256'):
             raise RuntimeError('Arte revisada ou hash ausente')
@@ -69,8 +72,8 @@ def check():
     validate()
     bot.verify()
     site = os.environ.get('PUBLIC_SITE_URL','').rstrip('/') or 'https://felipeflorenciobr-jpg.github.io/afcredito-instagram-auto'
-    # Conferir as duas mídias do primeiro dia, inclusive bytes após o deploy.
-    for item in posts()[:2]:
+    # Conferir os três horários do primeiro dia, inclusive bytes após o deploy.
+    for item in posts()[:3]:
         req=urllib.request.Request(site+'/media/'+post_key(item)+'.jpg',headers={'User-Agent':'AF-Preflight'})
         with urllib.request.urlopen(req,timeout=30) as response:
             data=response.read()
@@ -133,7 +136,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=("prepare", "validate", "check", "dry-run", "publish"))
     parser.add_argument("--date", default=datetime.now(TZ).date().isoformat())
-    parser.add_argument("--slot", choices=("10", "18"), default="10")
+    parser.add_argument("--slot", choices=("10", "14", "18"), default="10")
     args = parser.parse_args()
     try:
         if args.mode == "prepare":

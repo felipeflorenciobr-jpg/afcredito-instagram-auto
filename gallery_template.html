@@ -15,7 +15,7 @@ main{max-width:1100px;margin:auto;padding:24px 15px 80px}.intro{display:flex;fle
 .filters{display:flex;gap:7px;flex-wrap:wrap;margin:20px 0 28px}
 button{cursor:pointer;font:inherit}.filter{border:1px solid var(--border);background:#172d43;color:var(--fg);padding:8px 12px;border-radius:9px}.filter.active{background:var(--gold);color:#182533;border-color:var(--gold);font-weight:800}
 .day{margin:24px 0 34px}.date{font-size:19px;font-weight:800;margin:0 0 12px;border-bottom:1px solid var(--border);padding-bottom:8px;display:flex;gap:9px;align-items:center}
-.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.pair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .post{border:1px solid var(--border);background:var(--card);border-radius:14px;overflow:hidden;min-width:0}
 .posthead{padding:10px 12px;display:flex;justify-content:space-between;gap:8px;font-size:13px}.tag{color:var(--gold);font-weight:800}
 .imgwrap{background:#03101d;display:flex;justify-content:center;align-items:center;min-height:150px;cursor:zoom-in;position:relative}
@@ -26,13 +26,13 @@ body.modal-open{overflow:hidden}.overlay{position:fixed;inset:0;background:#0209
 .modalbar{width:min(96vw,850px);display:flex;gap:9px;justify-content:space-between;align-items:center}.modalbar strong{font-size:13px}.close{border:1px solid #728ca9;background:#0e243a;color:#fff;border-radius:9px;padding:7px 12px}
 .overlay img{max-width:min(96vw,950px);max-height:80vh;object-fit:contain;border-radius:4px}.overlay .modalcaption{font-size:11px;color:#e8f0fb;max-width:700px}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
-@media(max-width:620px){.pair{gap:8px}.posthead{font-size:11px;padding:8px}.info{padding:8px}.info h3{font-size:12px}.imgwrap img{max-height:280px}.date{font-size:16px}}
+@media(max-width:620px){.pair{grid-template-columns:1fr;gap:16px}.posthead{font-size:11px;padding:8px}.info{padding:8px}.info h3{font-size:12px}.imgwrap img{max-height:560px}.date{font-size:16px}}
 </style></head><body>
 <header class="top"><div class="brand"><img src="media/af-logo-oficial.png" alt="AF Crédito" style="width:140px;background:white;padding:8px;border-radius:8px"><div><h1>Prévia das publicações de novembro</h1><p class="subtitle">AF Crédito Vale do Ribeira • Artes revisadas • Feed e Stories • Horário de Brasília</p></div></div></header>
 <main>
-<div class="intro"><div class="summary"><div class="chip"><strong>54</strong> publicações</div><div class="chip"><strong>27</strong> feeds · 10h14</div><div class="chip"><strong>27</strong> Stories · 18h14</div><div class="chip">04–30/11/2026</div><div class="chip"><strong>0</strong> repetições por formato</div></div></div>
-<div class="notice"><strong>Calendário revisado.</strong> 27 artes distintas no feed e 27 nos Stories. Nenhuma arte se repete dentro do mesmo formato. Quando uma imagem aparece nos dois formatos, há intervalo mínimo de 12 dias. Feed e Story do mesmo dia usam artes diferentes. Não há publicação ao abrir esta prévia.</div>
-<div class="filters" role="group" aria-label="Filtrar"><button class="filter active" data-filter="all">Tudo (54)</button><button class="filter" data-filter="FEED">Só feed (27)</button><button class="filter" data-filter="STORY">Só Stories (27)</button><button class="filter" data-filter="official">Materiais da franquia (__OFFICIAL_COUNT__)</button></div>
+<div class="intro"><div class="summary"><div class="chip"><strong>81</strong> publicações</div><div class="chip"><strong>54</strong> feeds · 10h14 e 14h14</div><div class="chip"><strong>27</strong> Stories · 18h14</div><div class="chip">04–30/11/2026</div><div class="chip"><strong>0</strong> repetições por formato</div></div></div>
+<div class="notice"><strong>Calendário revisado.</strong> Três publicações por dia: feed às 10h14 e 14h14, Story às 18h14. As 27 peças extras das 14h14 são exclusivas e não repetem nenhuma arte dos outros horários. São 54 imagens diferentes no feed e 27 nos Stories; o reaproveitamento já aprovado entre os formatos mantém intervalo mínimo de 13 dias. Não há publicação ao abrir esta prévia.</div>
+<div class="filters" role="group" aria-label="Filtrar"><button class="filter active" data-filter="all">Tudo (81)</button><button class="filter" data-filter="FEED">Só feed (54)</button><button class="filter" data-filter="14">Extras · 14h14 (27)</button><button class="filter" data-filter="STORY">Só Stories (27)</button><button class="filter" data-filter="official">Materiais da franquia (__OFFICIAL_COUNT__)</button></div>
 <div id="calendar"></div>
 <footer>Prévia das mídias do repositório afcredito-instagram-auto • Horário de Brasília • Ativos em 1080 × 1350 (feed) / 1080 × 1920 (Stories).</footer>
 </main>
@@ -45,9 +45,9 @@ const root=document.getElementById('calendar'),modal=document.getElementById('ov
 const fmt=(s)=>new Date(s+'T12:00:00-03:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 const imageUrl=(p)=>'./media/nov2026_'+p.date+'_'+p.slot+'.jpg?v='+p.media_sha256.slice(0,12);
 function create(p){
-const el=document.createElement('article');el.className='post';el.dataset.type=p.type;el.dataset.source=p.source;
+const el=document.createElement('article');el.className='post';el.dataset.type=p.type;el.dataset.source=p.source;el.dataset.slot=p.slot;
 const head=document.createElement('div');head.className='posthead';
-const tag=document.createElement('span');tag.className='tag';tag.textContent=p.type==='FEED'?'FEED · 10h14':'STORY · 18h14';
+const tag=document.createElement('span');tag.className='tag';tag.textContent=p.type+' · '+p.slot+'h14';
 const origin=document.createElement('span');origin.textContent=p.source==='official'?'Arte da franquia':'Nova arte premium';
 head.append(tag,origin);
 const wrap=document.createElement('div');wrap.className='imgwrap';wrap.tabIndex=0;wrap.setAttribute('role','button');wrap.setAttribute('aria-label','Ampliar '+p.title);
@@ -72,6 +72,6 @@ s.append(h,pair);root.append(s);
 document.getElementById('close').addEventListener('click',()=>{modal.classList.remove('open');document.body.classList.remove('modal-open')});
 modal.addEventListener('click',e=>{if(e.target===modal){modal.classList.remove('open');document.body.classList.remove('modal-open')}})
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){modal.classList.remove('open');document.body.classList.remove('modal-open')}})
-document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));const mode=b.dataset.filter;document.querySelectorAll('.post').forEach(el=>{el.hidden=!(mode==='all'||el.dataset.type===mode||(mode==='official'&&el.dataset.source==='official'));});document.querySelectorAll('.day').forEach(el=>{el.hidden=![...el.querySelectorAll('.post')].some(p=>!p.hidden)})}));
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));const mode=b.dataset.filter;document.querySelectorAll('.post').forEach(el=>{el.hidden=!(mode==='all'||el.dataset.type===mode||el.dataset.slot===mode||(mode==='official'&&el.dataset.source==='official'));});document.querySelectorAll('.day').forEach(el=>{el.hidden=![...el.querySelectorAll('.post')].some(p=>!p.hidden)})}));
 </script>
 </body></html>

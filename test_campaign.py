@@ -71,4 +71,10 @@ class VisualDiversityTests(unittest.TestCase):
                {'date':'2026-11-16','type':'STORY','artwork':'alias.jpg'}]
         validate_diversity(items,self.root)
 
+    def test_extra_hour_cannot_reuse_a_story_even_after_twelve_days(self):
+        from premium_campaign import validate_diversity
+        items=[{'date':'2026-11-04','slot':'18','type':'STORY','artwork':'first.jpg'},
+               {'date':'2026-11-28','slot':'14','type':'FEED','artwork':'alias.jpg'}]
+        with self.assertRaisesRegex(ValueError,'exclusiva'):validate_diversity(items,self.root)
+
 if __name__=='__main__':unittest.main()

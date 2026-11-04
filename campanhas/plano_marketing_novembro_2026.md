@@ -3,9 +3,9 @@
 **Objetivo principal:** gerar conversas qualificadas no WhatsApp e oportunidades reais, não apenas visualizações.
 
 ## Publicação automatizada vigente
-- 04 a 30/11: 1 post no feed às **10h14** + 1 Story premium às **18h14** todos os dias (horário de São Paulo).
-- 27 feeds e 27 Stories — calendário aprovado tecnicamente em `campanhas/novembro_2026.json`.
-- Artes fotográficas revisadas e oficiais são empacotadas por `premium_campaign.py`; as versões de Story preservam a composição inteira, sem recortar texto nem esticar fotografias. 29 artes-base ocupam os 54 espaços: 27 imagens distintas por formato e intervalo mínimo de 12 dias no reaproveitamento entre feed e Story. Oito novas variações foram adicionadas na revisão de diversidade.
+- 04 a 30/11: 2 posts no feed às **10h14 e 14h14** + 1 Story premium às **18h14** todos os dias (horário de São Paulo).
+- 54 feeds e 27 Stories — calendário aprovado tecnicamente em `campanhas/novembro_2026.json`.
+- Artes fotográficas revisadas e oficiais são empacotadas por `premium_campaign.py`; as versões de Story preservam a composição inteira, sem recortar texto nem esticar fotografias. 56 artes-base ocupam os 81 espaços: 54 imagens distintas no feed, 27 nos Stories e 27 extras inteiramente exclusivas às 14h14. As imagens já compartilhadas entre feed e Story na versão anterior mantêm intervalo mínimo de 13 dias. A terceira publicação acrescenta 20 artes novas e sete materiais ainda não utilizados no calendário.
 - Publicação real permanece condicionada às variáveis `PUBLISH_ENABLED=true` e `CAMPANHA_NOVEMBRO_APPROVED=true`. A liberação segue a autorização do proprietário para execução automática deste calendário após validação.
 - Página de aprovação: https://felipeflorenciobr-jpg.github.io/afcredito-instagram-auto/previa-novembro-2026.html
 

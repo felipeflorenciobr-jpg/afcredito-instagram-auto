@@ -23,6 +23,8 @@ def validate_diversity(items, root=ROOT):
             raise ValueError('Master alterado depois da revisão')
         previous=seen.setdefault(digest,[])
         for q in previous:
+            if p.get('slot')=='14' or q.get('slot')=='14':
+                raise ValueError('A arte do terceiro horário deve ser exclusiva no mês')
             if q['type']==p['type']:
                 raise ValueError('Arte repetida em '+p['type']+': '+q['date']+' / '+p['date'])
             gap=abs((date.fromisoformat(p['date'])-date.fromisoformat(q['date'])).days)
