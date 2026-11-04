@@ -3,7 +3,9 @@ on:
   push:
     paths:
       - 'campanha_novembro.py'
-      - 'story_premium.py'
+      - 'premium_campaign.py'
+      - 'gallery_template.html'
+      - 'campanhas/premium_novembro_2026/**'
       - 'campanhas/brand/**'
       - '.github/workflows/campanha-novembro.yml'
       - 'campanhas/novembro_2026.json'
@@ -13,7 +15,7 @@ on:
       mode:
         description: 'Preparar, validar, testar ou publicar'
         type: choice
-        options: [prepare, validate, dry-run, publish]
+        options: [prepare, validate, check, dry-run, publish]
         default: validate
         required: true
       date:
@@ -24,8 +26,8 @@ on:
         options: ['10', '18']
         default: '10'
   schedule:
-    - cron: '14 13 * * *'
-    - cron: '14 21 * * *'
+    - cron: '14 13 * 11 *'
+    - cron: '14 21 * 11 *'
 permissions:
   contents: write
 concurrency:
@@ -49,7 +51,7 @@ jobs:
         run: |
           git config user.name 'AF Crédito Automação'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add docs/media/nov2026_*.jpg docs/nov2026_calendar.json
+          git add docs/media/nov2026_*.jpg docs/nov2026_calendar.json docs/previa-novembro-2026.html docs/calendario_novembro_2026.csv docs/index.html campanhas/novembro_2026.json
           if ! git diff --cached --quiet; then
             git commit -m 'Preparar imagens curadas de novembro'
             git push
@@ -79,13 +81,13 @@ jobs:
           if [ -n "$GH_SCHEDULE" ]; then
             MODE=publish
             case "$GH_SCHEDULE" in
-              '14 13 * * *') SLOT=10 ;;
-              '14 21 * * *') SLOT=18 ;;
+              '14 13 * 11 *') SLOT=10 ;;
+              '14 21 * 11 *') SLOT=18 ;;
             esac
           fi
           python campanha_novembro.py "${MODE:-validate}" --slot "${SLOT:-10}" ${DATE:+--date "$DATE"}
       - name: Salvar ID das publicações confirmadas
-        if: success()
+        if: always()
         run: |
           git config user.name 'AF Crédito Automação'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -94,3 +96,10 @@ jobs:
             git commit -m 'Registrar publicação de novembro e evitar repetição'
             git push
           fi
+      - name: Preservar registro para recuperação
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: november-publication-ledger-${{ github.run_id }}-${{ github.run_attempt }}
+          path: docs/nov2026_published.json
+          if-no-files-found: ignore

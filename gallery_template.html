@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Prévia novembro 2026 | AF Vale do Ribeira</title>
+<style>
+:root{color-scheme:dark;--bg:#081728;--card:#10253c;--border:#27415e;--gold:#ff4657;--fg:#f5f8fc;--muted:#b8c7da}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.5}
+.top{position:sticky;top:0;background:#081728ed;backdrop-filter:blur(12px);z-index:20;border-bottom:1px solid var(--border);padding:17px max(15px,calc((100vw - 1100px)/2))}
+.brand{display:flex;align-items:center;gap:12px}.logo{background:var(--gold);color:#10243a;padding:8px;border-radius:8px;font-size:19px;font-weight:900}.top h1{font-size:clamp(17px,3vw,26px);margin:0}.subtitle{font-size:13px;color:var(--muted);margin:2px 0 0}
+main{max-width:1100px;margin:auto;padding:24px 15px 80px}.intro{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.summary{display:flex;gap:10px;flex-wrap:wrap}.chip{padding:9px 13px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-size:13px}
+.notice{border-left:3px solid var(--gold);background:#233344;padding:11px 14px;border-radius:6px;font-size:13px;color:#faf3d9}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:20px 0 28px}
+button{cursor:pointer;font:inherit}.filter{border:1px solid var(--border);background:#172d43;color:var(--fg);padding:8px 12px;border-radius:9px}.filter.active{background:var(--gold);color:#182533;border-color:var(--gold);font-weight:800}
+.day{margin:24px 0 34px}.date{font-size:19px;font-weight:800;margin:0 0 12px;border-bottom:1px solid var(--border);padding-bottom:8px;display:flex;gap:9px;align-items:center}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.post{border:1px solid var(--border);background:var(--card);border-radius:14px;overflow:hidden;min-width:0}
+.posthead{padding:10px 12px;display:flex;justify-content:space-between;gap:8px;font-size:13px}.tag{color:var(--gold);font-weight:800}
+.imgwrap{background:#03101d;display:flex;justify-content:center;align-items:center;min-height:150px;cursor:zoom-in;position:relative}
+.imgwrap img{display:block;width:100%;max-height:435px;object-fit:contain;object-position:top}
+.imgwrap:after{content:"Toque para ampliar";position:absolute;right:8px;bottom:8px;padding:5px 8px;color:white;background:#041222bd;border-radius:7px;font-size:11px}
+.info{padding:10px 12px 13px}.info h3{font-size:14px;line-height:1.35;margin:0 0 7px}.info p{font-size:12px;color:var(--muted);margin:0}.details{background:none;border:0;text-decoration:underline;color:var(--gold);font-size:12px;padding:10px 0 0;text-align:left}.caption{display:none;font-size:12px;color:#e0e9f3;background:#0b1a2a;padding:12px;border-radius:8px;white-space:pre-wrap;margin-top:10px}.caption.open{display:block}
+body.modal-open{overflow:hidden}.overlay{position:fixed;inset:0;background:#020913ec;z-index:100;display:none;flex-direction:column;align-items:center;gap:8px;padding:9px}.overlay.open{display:flex}
+.modalbar{width:min(96vw,850px);display:flex;gap:9px;justify-content:space-between;align-items:center}.modalbar strong{font-size:13px}.close{border:1px solid #728ca9;background:#0e243a;color:#fff;border-radius:9px;padding:7px 12px}
+.overlay img{max-width:min(96vw,950px);max-height:80vh;object-fit:contain;border-radius:4px}.overlay .modalcaption{font-size:11px;color:#e8f0fb;max-width:700px}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+@media(max-width:620px){.pair{gap:8px}.posthead{font-size:11px;padding:8px}.info{padding:8px}.info h3{font-size:12px}.imgwrap img{max-height:280px}.date{font-size:16px}}
+</style></head><body>
+<header class="top"><div class="brand"><img src="media/af-logo-oficial.png" alt="AF Crédito" style="width:140px;background:white;padding:8px;border-radius:8px"><div><h1>Prévia das publicações de novembro</h1><p class="subtitle">AF Crédito Vale do Ribeira • Artes revisadas • Feed e Stories • Horário de Brasília</p></div></div></header>
+<main>
+<div class="intro"><div class="summary"><div class="chip"><strong>54</strong> artes</div><div class="chip"><strong>27</strong> feeds · 10h14</div><div class="chip"><strong>27</strong> Stories · 18h14</div><div class="chip">04–30/11/2026</div></div></div>
+<div class="notice"><strong>Calendário revisado.</strong> 27 dias, com 1 feed e 1 Story por dia. Os Stories preservam a arte completa do feed. As imagens são reutilizadas em temas recorrentes, com legendas específicas. Não há publicação ao abrir esta prévia.</div>
+<div class="filters" role="group" aria-label="Filtrar"><button class="filter active" data-filter="all">Tudo (54)</button><button class="filter" data-filter="FEED">Só feed (27)</button><button class="filter" data-filter="STORY">Só Stories (27)</button><button class="filter" data-filter="official">Materiais da franquia (20)</button></div>
+<div id="calendar"></div>
+<footer>Prévia das mídias do repositório afcredito-instagram-auto • Horário de Brasília • Ativos em 1080 × 1350 (feed) / 1080 × 1920 (Stories).</footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-label="Imagem ampliada" aria-modal="true">
+<div class="modalbar"><strong id="modalTitle"></strong><button class="close" type="button" id="close">Fechar ✕</button></div><img id="modalImg" alt=""><div class="modalcaption" id="modalCaption"></div>
+</div>
+<script>
+const POSTS=__POSTS__;
+const root=document.getElementById('calendar'),modal=document.getElementById('overlay');
+const fmt=(s)=>new Date(s+'T12:00:00-03:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+const imageUrl=(p)=>'./media/nov2026_'+p.date+'_'+p.slot+'.jpg?v='+p.media_sha256.slice(0,12);
+function create(p){
+const el=document.createElement('article');el.className='post';el.dataset.type=p.type;el.dataset.source=p.source;
+const head=document.createElement('div');head.className='posthead';
+const tag=document.createElement('span');tag.className='tag';tag.textContent=p.type==='FEED'?'FEED · 10h14':'STORY · 18h14';
+const origin=document.createElement('span');origin.textContent=p.source==='official'?'Arte da franquia':'Nova arte premium';
+head.append(tag,origin);
+const wrap=document.createElement('div');wrap.className='imgwrap';wrap.tabIndex=0;wrap.setAttribute('role','button');wrap.setAttribute('aria-label','Ampliar '+p.title);
+const img=document.createElement('img');img.src=imageUrl(p);img.alt=p.title+' — '+p.subtitle;img.loading='lazy';
+wrap.append(img);
+const info=document.createElement('div');info.className='info';
+const title=document.createElement('h3');title.textContent=p.creative_title||p.title;const sub=document.createElement('p');sub.textContent=p.subtitle;
+const more=document.createElement('button');more.className='details';more.textContent='Ver legenda completa';
+const cap=document.createElement('div');cap.className='caption';cap.textContent=p.caption;
+more.addEventListener('click',()=>{cap.classList.toggle('open');more.textContent=cap.classList.contains('open')?'Ocultar legenda':'Ver legenda completa'});
+info.append(title,sub,more,cap);el.append(head,wrap,info);
+const open=()=>{document.getElementById('modalImg').src=imageUrl(p);document.getElementById('modalImg').alt=p.title;document.getElementById('modalTitle').textContent=p.date.split('-').reverse().join('/')+' • '+p.type+' • '+p.title;document.getElementById('modalCaption').textContent=p.subtitle;modal.classList.add('open');document.body.classList.add('modal-open')};
+wrap.addEventListener('click',open);wrap.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+return el;
+}
+for(const day of [...new Set(POSTS.map(x=>x.date))]){
+const s=document.createElement('section');s.className='day';
+const h=document.createElement('h2');h.className='date';h.textContent=fmt(day);
+const pair=document.createElement('div');pair.className='pair';for(const p of POSTS.filter(x=>x.date===day))pair.append(create(p));
+s.append(h,pair);root.append(s);
+}
+document.getElementById('close').addEventListener('click',()=>{modal.classList.remove('open');document.body.classList.remove('modal-open')});
+modal.addEventListener('click',e=>{if(e.target===modal){modal.classList.remove('open');document.body.classList.remove('modal-open')}})
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){modal.classList.remove('open');document.body.classList.remove('modal-open')}})
+document.querySelectorAll('.filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));const mode=b.dataset.filter;document.querySelectorAll('.post').forEach(el=>{el.hidden=!(mode==='all'||el.dataset.type===mode||(mode==='official'&&el.dataset.source==='official'));});document.querySelectorAll('.day').forEach(el=>{el.hidden=![...el.querySelectorAll('.post')].some(p=>!p.hidden)})}));
+</script>
+</body></html>

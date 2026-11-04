@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publica apenas as datas curadas de novembro de 2026, com dupla aprovação."""
+"""Campanha revisada de novembro, com mídias curadas e registro por formato."""
 import argparse
 import json
 import os
@@ -31,32 +31,23 @@ def post_key(item):
     return "nov2026_" + item["date"] + "_" + item["slot"]
 
 def prepare():
-    MEDIA.mkdir(parents=True, exist_ok=True)
-    from story_premium import render_story
-    for item in posts():
-        filename = MEDIA / (post_key(item) + ".jpg")
-        if item["type"] == "STORY":
-            render_story(item, filename)
-        elif item["source"] == "official":
-            origin = ROOT / "campanhas" / "assets_novembro_2026" / item["asset"]
-            if not origin.exists():
-                raise FileNotFoundError(origin)
-            size = (1080, 1920) if item["type"] == "STORY" else (1080, 1350)
-            with Image.open(origin) as f:
-                art = ImageOps.contain(f.convert("RGB"), size, Image.Resampling.LANCZOS)
-                canvas = Image.new("RGB", size, (9, 39, 72))
-                canvas.paste(art, ((size[0] - art.width) // 2, (size[1] - art.height) // 2))
-                canvas.save(filename, "JPEG", quality=88, optimize=True)
-        else:
-            bot.image_for({"key": post_key(item), "type": item["type"], "theme": item["theme"],
-                           "title": item["title"], "subtitle": item["subtitle"]})
-        print("Preparada:", filename.name)
-    (ROOT / "docs" / "nov2026_calendar.json").write_text(
-        json.dumps(posts(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("Nenhuma publicação enviada.")
+    from premium_campaign import prepare as prepare_reviewed
+    prepare_reviewed(posts())
 
 def validate():
+    import hashlib
+    from collections import Counter
+    items = posts()
+    days = Counter(x['date'] for x in items)
+    if len(items) != 54 or len(days) != 27 or any(n != 2 for n in days.values()):
+        raise RuntimeError('Calendário deve conter 27 pares feed/Story')
     for item in posts():
+        if item['slot'] != ('18' if item['type'] == 'STORY' else '10'):
+            raise RuntimeError('Formato incompatível com horário')
+        if not item.get('artwork') or not item.get('media_sha256'):
+            raise RuntimeError('Arte revisada ou hash ausente')
+        if '\\n' in item['caption']:
+            raise RuntimeError('Legenda contém quebras de linha escapadas')
         filename = MEDIA / (post_key(item) + ".jpg")
         if not filename.is_file():
             raise RuntimeError("Mídia ausente: " + str(filename))
@@ -64,7 +55,26 @@ def validate():
             expected = (1080, 1920) if item["type"] == "STORY" else (1080, 1350)
             if image.size != expected:
                 raise RuntimeError("Dimensões incorretas em " + filename.name)
+        if hashlib.sha256(filename.read_bytes()).hexdigest() != item['media_sha256']:
+            raise RuntimeError('Arquivo diverge da prévia revisada: '+filename.name)
+    if json.loads((ROOT/'docs/nov2026_calendar.json').read_text()) != items:
+        raise RuntimeError('Prévia e calendário divergentes')
     print("Todas as artes têm a proporção esperada; nenhuma publicação enviada.")
+
+def check():
+    """Verifica conta/token e mídias hospedadas, sem criar contêiner nem publicar."""
+    import hashlib
+    validate()
+    bot.verify()
+    site = os.environ.get('PUBLIC_SITE_URL','').rstrip('/') or 'https://felipeflorenciobr-jpg.github.io/afcredito-instagram-auto'
+    # Conferir as duas mídias do primeiro dia, inclusive bytes após o deploy.
+    for item in posts()[:2]:
+        req=urllib.request.Request(site+'/media/'+post_key(item)+'.jpg',headers={'User-Agent':'AF-Preflight'})
+        with urllib.request.urlopen(req,timeout=30) as response:
+            data=response.read()
+        if hashlib.sha256(data).hexdigest()!=item['media_sha256']:
+            raise RuntimeError('Pages ainda não contém a versão revisada')
+    print('PREFLIGHT_OK: identidade e mídias confirmadas; nenhuma publicação enviada.')
 
 def publish(day, slot, dry_run=False):
     item = next((x for x in posts() if x["date"] == day and x["slot"] == slot), None)
@@ -76,10 +86,10 @@ def publish(day, slot, dry_run=False):
         raise RuntimeError("Mídia ainda não gerada: " + key)
     history = json.loads(LEDGER.read_text(encoding="utf-8")) if LEDGER.exists() else {}
     if key in history:
-        print("Já publicado:", key, history[key]["id"])
+        print("Registro existente; não repetir:", key, history[key].get("id", history[key].get('status')))
         return
     site = os.environ.get("PUBLIC_SITE_URL", "").rstrip("/") or "https://felipeflorenciobr-jpg.github.io/afcredito-instagram-auto"
-    image_url = site + "/media/" + key + ".jpg"
+    image_url = site + "/media/" + key + ".jpg?v=" + item['media_sha256'][:12]
     print("Candidato:", key, item["type"], image_url)
     if dry_run:
         print("DRY RUN sem publicação:", item["caption"])
@@ -99,6 +109,8 @@ def publish(day, slot, dry_run=False):
     else:
         fields["caption"] = item["caption"]
     creation_id = bot.api(instagram_id + "/media", "POST", fields)["id"]
+    history[key]={'creation_id':creation_id,'status':'container_created','when':datetime.now(TZ).isoformat()}
+    LEDGER.write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     for attempt in range(12):
         status = bot.api(creation_id + "?fields=status_code").get("status_code")
         if status == "FINISHED":
@@ -108,14 +120,16 @@ def publish(day, slot, dry_run=False):
         time.sleep(5)
     else:
         raise RuntimeError("Contêiner pendente. Conferir Instagram antes de tentar novamente.")
+    history[key]['status']='publish_attempted'
+    LEDGER.write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     result = bot.api(instagram_id + "/media_publish", "POST", {"creation_id": creation_id})
-    history[key] = {"id": result["id"], "when": datetime.now(TZ).isoformat()}
+    history[key] = {"id": result["id"], "status":"published", "when": datetime.now(TZ).isoformat()}
     LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("Publicado:", key, result["id"])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("prepare", "validate", "dry-run", "publish"))
+    parser.add_argument("mode", choices=("prepare", "validate", "check", "dry-run", "publish"))
     parser.add_argument("--date", default=datetime.now(TZ).date().isoformat())
     parser.add_argument("--slot", choices=("10", "18"), default="10")
     args = parser.parse_args()
@@ -124,6 +138,8 @@ if __name__ == "__main__":
             prepare()
         elif args.mode == "validate":
             validate()
+        elif args.mode == "check":
+            check()
         else:
             publish(args.date, args.slot, args.mode == "dry-run")
     except Exception as e:
