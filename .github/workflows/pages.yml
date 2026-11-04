@@ -1,6 +1,9 @@
 name: Hospedar artes AF Crédito (GitHub Pages)
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Novembro 2026 - campanha curada AF']
+    types: [completed]
   push:
     branches: ['main']
     paths:
@@ -15,6 +18,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
