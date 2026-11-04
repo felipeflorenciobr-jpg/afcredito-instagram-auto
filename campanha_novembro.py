@@ -32,9 +32,12 @@ def post_key(item):
 
 def prepare():
     MEDIA.mkdir(parents=True, exist_ok=True)
+    from story_premium import render_story
     for item in posts():
         filename = MEDIA / (post_key(item) + ".jpg")
-        if item["source"] == "official":
+        if item["type"] == "STORY":
+            render_story(item, filename)
+        elif item["source"] == "official":
             origin = ROOT / "campanhas" / "assets_novembro_2026" / item["asset"]
             if not origin.exists():
                 raise FileNotFoundError(origin)
