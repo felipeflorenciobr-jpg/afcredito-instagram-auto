@@ -28,9 +28,12 @@ on:
         options: ['10', '14', '18']
         default: '10'
   schedule:
+    # Horários principais: 10h14, 14h14 e 18h14 (Brasília).
     - cron: '14 13 * 11 *'
     - cron: '14 17 * 11 *'
     - cron: '14 21 * 11 *'
+    # Verificações a cada 15 minutos. GitHub schedule pode atrasar.
+    - cron: '7,22,37,52 * * 11 *'
 permissions:
   contents: write
 concurrency:
@@ -83,12 +86,9 @@ jobs:
         shell: bash
         run: |
           if [ -n "$GH_SCHEDULE" ]; then
-            MODE=publish
-            case "$GH_SCHEDULE" in
-              '14 13 * 11 *') SLOT=10 ;;
-              '14 17 * 11 *') SLOT=14 ;;
-              '14 21 * 11 *') SLOT=18 ;;
-            esac
+            # Recuperar somente conteúdo vencido no relógio de Brasília.
+            # Nunca usar a hora da cron como a data da postagem ao ocorrer atraso.
+            MODE=catchup
           fi
           python campanha_novembro.py "${MODE:-validate}" --slot "${SLOT:-10}" ${DATE:+--date "$DATE"}
       - name: Salvar ID das publicações confirmadas
