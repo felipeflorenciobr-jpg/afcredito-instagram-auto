@@ -67,7 +67,7 @@ class PublicationSafetyTests(unittest.TestCase):
             publish.assert_not_called()
 
     def test_verify_caption_reads_real_meta_content(self):
-        with patch.object(campaign.bot, 'api', return_value={'id':'media123','caption':'Olá INSS!\\nConfira o CET.','media_type':'IMAGE','permalink':'https://www.instagram.com/p/example/'}) as api:
+        with patch.object(campaign.bot, 'api', return_value={'id':'media123','caption':'Olá INSS!\nConfira o CET.','media_type':'IMAGE','permalink':'https://www.instagram.com/p/example/'}) as api:
             result=campaign.verify_caption('media123','Olá INSS! Confira o CET.',attempts=1,pause=0)
             self.assertEqual(result['id'],'media123')
             api.assert_called_once_with('media123?fields=id,caption,media_type,permalink')
