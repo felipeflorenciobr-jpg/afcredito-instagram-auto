@@ -17,7 +17,7 @@ on:
       mode:
         description: 'Preparar, validar, testar ou publicar'
         type: choice
-        options: [prepare, validate, check, dry-run, publish]
+        options: [prepare, validate, check, dry-run, publish, audit]
         default: validate
         required: true
       date:
