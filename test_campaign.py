@@ -66,6 +66,18 @@ class PublicationSafetyTests(unittest.TestCase):
             campaign.catchup(when)
             publish.assert_not_called()
 
+    def test_verify_caption_reads_real_meta_content(self):
+        with patch.object(campaign.bot, 'api', return_value={'id':'media123','caption':'Olá INSS!\\nConfira o CET.','media_type':'IMAGE','permalink':'https://www.instagram.com/p/example/'}) as api:
+            result=campaign.verify_caption('media123','Olá INSS! Confira o CET.',attempts=1,pause=0)
+            self.assertEqual(result['id'],'media123')
+            api.assert_called_once_with('media123?fields=id,caption,media_type,permalink')
+
+    def test_verify_caption_rejects_empty_meta_caption(self):
+        with patch.object(campaign.bot, 'api', return_value={'id':'media123','media_type':'IMAGE'}):
+            with self.assertRaisesRegex(RuntimeError,'META_CAPTION_MISSING'):
+                campaign.verify_caption('media123','Legenda planejada',attempts=1,pause=0)
+
+
 class VisualDiversityTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
