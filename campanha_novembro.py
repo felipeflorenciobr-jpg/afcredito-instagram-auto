@@ -139,9 +139,9 @@ def publish(day, slot, dry_run=False):
         except Exception as exc:
             history[key]["caption_verified"] = False
             history[key]["caption_issue"] = str(exc)
-            LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+            LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             raise
-        LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+        LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def verify_caption(media_id, expected_caption, attempts=4, pause=4):
@@ -157,7 +157,7 @@ def verify_caption(media_id, expected_caption, attempts=4, pause=4):
             permalink = media.get("permalink") or ""
             print("CONFIRMACAO_META:", media_id, "tipo:", media.get("media_type"),
                   "caracteres_legenda:", len(actual), "url:", permalink)
-            if re.sub(r"\\s+", " ", actual).strip() == re.sub(r"\\s+", " ", expected_caption).strip():
+            if re.sub(r"\s+", " ", actual).strip() == re.sub(r"\s+", " ", expected_caption).strip():
                 print("CAPTION_VERIFIED:", media_id)
                 return media
             last_error = ("META_CAPTION_MISSING" if not actual.strip() else "META_CAPTION_MISMATCH")
