@@ -132,9 +132,37 @@ def publish(day, slot, dry_run=False):
     LEDGER.write_text(json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("Publicado:", key, result["id"])
 
+def catchup(now=None):
+    """Revisita horários vencidos hoje e publica no máximo um item por execução.
+
+    Execuções frequentes compensam atrasos do agendador do GitHub. O ledger
+    impede duplicatas, inclusive quando a resposta da Meta é inconclusiva.
+    """
+    now = now or datetime.now(TZ)
+    local_now = now.astimezone(TZ)
+    if (os.environ.get("PUBLISH_ENABLED") != "true"
+            or os.environ.get("CAMPANHA_NOVEMBRO_APPROVED") != "true"):
+        raise RuntimeError("Recuperação desativada: verifique variáveis de aprovação.")
+    day = local_now.date().isoformat()
+    history = json.loads(LEDGER.read_text(encoding="utf-8")) if LEDGER.exists() else {}
+    due = []
+    for item in posts():
+        if item["date"] != day:
+            continue
+        scheduled = local_now.replace(hour=int(item["slot"]), minute=14, second=0, microsecond=0)
+        if scheduled <= local_now and post_key(item) not in history:
+            due.append(item)
+    due.sort(key=lambda item: int(item["slot"]))
+    if not due:
+        print("CATCHUP_OK: nenhum horário vencido e pendente em", day)
+        return
+    candidate = due[0]
+    print("CATCHUP: recuperando", post_key(candidate), "pendências:", len(due))
+    publish(day, candidate["slot"])
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("prepare", "validate", "check", "dry-run", "publish"))
+    parser.add_argument("mode", choices=("prepare", "validate", "check", "dry-run", "publish", "catchup"))
     parser.add_argument("--date", default=datetime.now(TZ).date().isoformat())
     parser.add_argument("--slot", choices=("10", "14", "18"), default="10")
     args = parser.parse_args()
@@ -145,6 +173,8 @@ if __name__ == "__main__":
             validate()
         elif args.mode == "check":
             check()
+        elif args.mode == "catchup":
+            catchup()
         else:
             publish(args.date, args.slot, args.mode == "dry-run")
     except Exception as e:
