@@ -3,6 +3,7 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 import campanha_novembro as campaign
@@ -43,6 +44,27 @@ class PublicationSafetyTests(unittest.TestCase):
         with patch.object(campaign.bot,'verify') as verify:
             campaign.publish('2026-11-04','10',dry_run=True)
             verify.assert_not_called()
+
+
+    def test_catchup_waits_until_slot_time(self):
+        when=datetime(2026,11,4,10,7,tzinfo=campaign.TZ)
+        with patch.dict(os.environ,{'PUBLISH_ENABLED':'true','CAMPANHA_NOVEMBRO_APPROVED':'true'}),patch.object(campaign,'publish') as publish:
+            campaign.catchup(when)
+            publish.assert_not_called()
+
+    def test_catchup_recovers_only_one_due_slot_per_run(self):
+        second=dict(self.item,slot='14')
+        when=datetime(2026,11,4,14,35,tzinfo=campaign.TZ)
+        with patch.dict(os.environ,{'PUBLISH_ENABLED':'true','CAMPANHA_NOVEMBRO_APPROVED':'true'}),patch.object(campaign,'posts',return_value=[second,self.item]),patch.object(campaign,'publish') as publish:
+            campaign.catchup(when)
+            publish.assert_called_once_with('2026-11-04','10')
+
+    def test_catchup_obeys_ledger_to_avoid_repeats(self):
+        (self.root/'ledger.json').write_text(json.dumps({'nov2026_2026-11-04_10':{'status':'published','id':'existing'}}))
+        when=datetime(2026,11,4,10,35,tzinfo=campaign.TZ)
+        with patch.dict(os.environ,{'PUBLISH_ENABLED':'true','CAMPANHA_NOVEMBRO_APPROVED':'true'}),patch.object(campaign,'publish') as publish:
+            campaign.catchup(when)
+            publish.assert_not_called()
 
 class VisualDiversityTests(unittest.TestCase):
     def setUp(self):
