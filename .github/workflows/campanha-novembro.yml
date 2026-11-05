@@ -36,11 +36,12 @@ on:
     - cron: '7,22,37,52 * * 11 *'
 permissions:
   contents: write
-concurrency:
-  group: af-credito-content
-  cancel-in-progress: false
 jobs:
   prepare:
+    # Preparação não bloqueia publicações; versões antigas são substituídas.
+    concurrency:
+      group: af-credito-prepare
+      cancel-in-progress: true
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'prepare')
     runs-on: ubuntu-latest
     steps:
@@ -64,6 +65,10 @@ jobs:
             git push
           fi
   publication:
+    # Apenas uma chamada à Meta por vez, sem disputa com o gerador de imagens.
+    concurrency:
+      group: af-credito-publication
+      cancel-in-progress: false
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode != 'prepare')
     runs-on: ubuntu-latest
     steps:
