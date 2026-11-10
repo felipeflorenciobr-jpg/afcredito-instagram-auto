@@ -14,7 +14,7 @@
     "special_ad_categories": [
       "FINANCIAL_PRODUCTS_SERVICES"
     ],
-    "requested_status": "PAUSED",
+    "requested_status": "ACTIVE",
     "meta_id": null
   },
   "adset": {
@@ -29,12 +29,14 @@
       "instagram_story",
       "facebook_story"
     ],
-    "requested_status": "PAUSED",
-    "daily_budget_brl": null,
+    "requested_status": "ACTIVE",
+    "daily_budget_brl": 20,
     "lifetime_budget_brl": null,
     "start_time": null,
     "end_time": null,
-    "optimization": "Pendente de validar mensuração da página; não configurar conversão Lead sem evento verificado."
+    "optimization": "Pendente de validar mensuração da página; não configurar conversão Lead sem evento verificado.",
+    "daily_budget_minor_units": 2000,
+    "schedule_mode": "CONTINUOUS_UNTIL_USER_PAUSES"
   },
   "destination": "https://afcredito-valedoribeira.afvaledoribeira.workers.dev/?utm_source=meta&utm_medium=paid_social&utm_campaign=siape_margem_nov2026&utm_content={{ad.id}}#siape",
   "ad": {
@@ -42,7 +44,7 @@
     "cta": "LEARN_MORE",
     "headline": "Consignado SIAPE: conheça as condições",
     "primary_text": "Consignado SIAPE para servidores federais ativos, aposentados e pensionistas com margem disponível.\n\nConheça a AF Crédito no site, entenda as opções e fale com nossa equipe pelo WhatsApp. A página também apresenta portabilidade com refinanciamento e refinanciamento para avaliação de contratos existentes.\n\nCrédito sujeito à análise, margem, elegibilidade e aprovação da instituição financeira. Não cobramos depósito antecipado para liberar empréstimo.",
-    "requested_status": "PAUSED",
+    "requested_status": "ACTIVE",
     "meta_id": null
   },
   "assets": [
@@ -99,14 +101,26 @@
     "meta_audit_run_id": 42755634742
   },
   "pending": [
-    "Criação de campanha, criativo e anúncio indisponível na integração desta sessão.",
-    "Definir orçamento e duração com Felipe antes de qualquer ativação.",
+    "Criação de campanha, conjunto e anúncio continua indisponível na integração desta sessão (verificada novamente após autorização de orçamento).",
     "Validar mensuração e otimização antes de veicular; UTMs, isoladamente, não medem conversões.",
     "Reconsultar campanhas na montagem para evitar duplicação e validar exigências atuais no Gerenciador."
   ],
   "execution": {
     "creates_ads": false,
     "enables_spend": false,
-    "contains_tokens": false
+    "contains_tokens": false,
+    "actual_meta_state": "NOT_CREATED",
+    "activation_executed": false
+  },
+  "updated_at": "2026-11-10T01:35:00-03:00",
+  "authorization": {
+    "daily_budget_brl": 20,
+    "currency": "BRL",
+    "duration": "Contínuo até Felipe solicitar pausa",
+    "activation_authorized": true,
+    "user_instruction": "20/dia. Contínuo até eu parar",
+    "approved_on": "2026-11-10",
+    "applies_to": "Apenas esta campanha SIAPE; não reativar campanhas antigas.",
+    "note": "Autorização registrada no plano; nenhuma configuração alterada na Meta."
   }
 }
