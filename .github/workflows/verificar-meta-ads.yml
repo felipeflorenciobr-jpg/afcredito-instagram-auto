@@ -1,0 +1,63 @@
+name: Verificar acesso Meta Ads
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Conferir permissoes e contas sem criar anuncios
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          from urllib.parse import urlencode, urlsplit
+          token = os.environ.get("META_ACCESS_TOKEN", "").strip()
+          if not token:
+              print("META_TOKEN_CONFIGURED=false")
+              raise SystemExit(1)
+          print("META_TOKEN_CONFIGURED=true")
+          def read(path, params):
+              url = "https://graph.facebook.com/v24.0/" + path + "?" + urlencode(params)
+              try:
+                  with urlopen(Request(url, headers={"Authorization": "Bearer " + token}), timeout=25) as r:
+                      return json.load(r)
+              except HTTPError as exc:
+                  try: err = json.loads(exc.read()).get("error", {})
+                  except Exception: err = {}
+                  print(json.dumps({"endpoint": path, "error_code": err.get("code"), "error_subcode": err.get("error_subcode"), "http_status": exc.code}))
+                  return None
+              except Exception:
+                  print(json.dumps({"endpoint": path, "error": "network_or_response_error"}))
+                  return None
+          permissions = read("me/permissions", {"limit": 100})
+          if permissions:
+              granted = sorted(x.get("permission", "") for x in permissions.get("data", []) if x.get("status") == "granted")
+              print("META_GRANTED_PERMISSIONS=" + json.dumps(granted))
+              print("META_ADS_MANAGEMENT_GRANTED=" + str("ads_management" in granted).lower())
+          after = None
+          seen = set()
+          account_count = 0
+          for _ in range(20):
+              params = {"fields": "id,account_id,name,currency,timezone_name,account_status", "limit": 100}
+              if after: params["after"] = after
+              result = read("me/adaccounts", params)
+              if result is None: break
+              for account in result.get("data", []):
+                  if account.get("id") not in seen:
+                      seen.add(account.get("id"))
+                      print("META_AD_ACCOUNT=" + json.dumps({k: account.get(k) for k in ("id", "account_id", "name", "currency", "timezone_name", "account_status")}, ensure_ascii=False))
+                      account_count += 1
+              paging = result.get("paging", {})
+              cursor = paging.get("cursors", {}).get("after")
+              if not paging.get("next") or not cursor or cursor == after: break
+              after = cursor
+          print("META_AD_ACCOUNTS_FOUND=" + str(account_count))
+          print("ADS_CREATED=0")
+          print("SPEND_ENABLED=false")
+          PY
