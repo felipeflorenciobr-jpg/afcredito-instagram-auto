@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "prepared_at": "2026-11-10",
+  "timezone": "America/Sao_Paulo",
+  "preparation_status": "DRAFT_NOT_CREATED_IN_META",
+  "ad_account_id": "act_1226091822578248",
+  "ad_account_name": "Felipe Florêncio",
+  "facebook_page_id": "518959527965739",
+  "instagram_user_id": "17841471091739370",
+  "instagram_username": "afcredito.valedoribeira",
+  "campaign": {
+    "name": "AF | SIAPE | Margem livre | Site | 2026-11",
+    "proposed_objective": "OUTCOME_TRAFFIC",
+    "special_ad_categories": [
+      "FINANCIAL_PRODUCTS_SERVICES"
+    ],
+    "requested_status": "PAUSED",
+    "meta_id": null
+  },
+  "adset": {
+    "name": "SIAPE | Brasil | Site",
+    "country": "BR",
+    "minimum_age": 18,
+    "genders": "all",
+    "detailed_targeting": null,
+    "placements": [
+      "facebook_feed",
+      "instagram_feed",
+      "instagram_story",
+      "facebook_story"
+    ],
+    "requested_status": "PAUSED",
+    "daily_budget_brl": null,
+    "lifetime_budget_brl": null,
+    "start_time": null,
+    "end_time": null,
+    "optimization": "Pendente de validar mensuração da página; não configurar conversão Lead sem evento verificado."
+  },
+  "destination": "https://afcredito-valedoribeira.afvaledoribeira.workers.dev/?utm_source=meta&utm_medium=paid_social&utm_campaign=siape_margem_nov2026&utm_content={{ad.id}}#siape",
+  "ad": {
+    "name": "SIAPE | Margem disponível | Conheça a AF",
+    "cta": "LEARN_MORE",
+    "headline": "Consignado SIAPE: conheça as condições",
+    "primary_text": "Consignado SIAPE para servidores federais ativos, aposentados e pensionistas com margem disponível.\n\nConheça a AF Crédito no site, entenda as opções e fale com nossa equipe pelo WhatsApp. A página também apresenta portabilidade com refinanciamento e refinanciamento para avaliação de contratos existentes.\n\nCrédito sujeito à análise, margem, elegibilidade e aprovação da instituição financeira. Não cobramos depósito antecipado para liberar empréstimo.",
+    "requested_status": "PAUSED",
+    "meta_id": null
+  },
+  "assets": [
+    {
+      "role": "feed",
+      "library_file_id": "libfile_94831153a1ac8191b33fe6e93a1a0f3d",
+      "filename": "Consignado SIAPE com margem disponível.png",
+      "width": 1122,
+      "height": 1402
+    },
+    {
+      "role": "stories",
+      "library_file_id": "libfile_fcf35a19c1648191a0add047d5a9ba41",
+      "filename": "Consignado SIAPE para servidores federais.png",
+      "width": 941,
+      "height": 1672
+    }
+  ],
+  "qualification": {
+    "first_contact": [
+      "Seu vínculo é federal/SIAPE?",
+      "Você busca crédito novo com margem, portabilidade com refinanciamento ou refinanciamento?",
+      "A margem está disponível, indisponível ou ainda não foi consultada?"
+    ],
+    "qualified_lead_definition": "Vínculo SIAPE confirmado, modalidade identificada e margem/contrato potencialmente elegível após avaliação.",
+    "credential_handling": "Não solicitar senha ou códigos do SouGov. Documentos somente quando necessários ao atendimento."
+  },
+  "measurement": {
+    "site_pixel_detected": false,
+    "qualified_lead_event_verified": false,
+    "utm_links_prepared": true,
+    "utm_persistence_to_whatsapp_verified": false,
+    "primary_kpis": [
+      "contatos SIAPE elegíveis",
+      "custo por contato elegível",
+      "propostas",
+      "contratos pagos",
+      "comissão líquida após mídia"
+    ]
+  },
+  "existing_campaign_reference": {
+    "id": "120247825920930144",
+    "name": "AF Servidor Federal | Site | Trafego | R$25 dia | 202610091548",
+    "status_at_audit": "PAUSED",
+    "action": "Nenhuma alteração. R$25 é orçamento antigo no nome, não autorização para esta campanha."
+  },
+  "verified": {
+    "website_section_live": true,
+    "whatsapp_links_checked": 17,
+    "whatsapp_links_valid": 17,
+    "sites_deployment_status": "succeeded",
+    "cloudflare_run_id": 42755807687,
+    "site_commit": "37c2b17e103581a44937e5b02a91eec139bfa684",
+    "meta_audit_run_id": 42755634742
+  },
+  "pending": [
+    "Criação de campanha, criativo e anúncio indisponível na integração desta sessão.",
+    "Definir orçamento e duração com Felipe antes de qualquer ativação.",
+    "Validar mensuração e otimização antes de veicular; UTMs, isoladamente, não medem conversões.",
+    "Reconsultar campanhas na montagem para evitar duplicação e validar exigências atuais no Gerenciador."
+  ],
+  "execution": {
+    "creates_ads": false,
+    "enables_spend": false,
+    "contains_tokens": false
+  }
+}
