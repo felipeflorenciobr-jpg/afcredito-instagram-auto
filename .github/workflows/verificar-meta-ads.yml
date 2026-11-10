@@ -58,6 +58,18 @@ jobs:
               if not paging.get("next") or not cursor or cursor == after: break
               after = cursor
           print("META_AD_ACCOUNTS_FOUND=" + str(account_count))
+          checks = [
+              ("act_1226091822578248", {"fields": "id,name,currency,timezone_name,account_status,disable_reason,business"}),
+              ("me/accounts", {"fields": "id,name,instagram_business_account{id,username},tasks", "limit": 100}),
+              ("act_1226091822578248/adspixels", {"fields": "id,name,last_fired_time", "limit": 100}),
+              ("act_1226091822578248/campaigns", {"fields": "id,name,status,objective,special_ad_categories", "limit": 10}),
+              ("act_1226091822578248/ads", {"fields": "id,name,creative{id,actor_id,instagram_user_id}", "limit": 5})
+          ]
+          for endpoint, params in checks:
+              result = read(endpoint, params)
+              if result is not None:
+                  if "data" in result: result = {"data": result["data"], "has_more": bool(result.get("paging", {}).get("next"))}
+                  print("META_ASSET=" + json.dumps({"endpoint": endpoint, "result": result}, ensure_ascii=False))
           print("ADS_CREATED=0")
           print("SPEND_ENABLED=false")
           PY
