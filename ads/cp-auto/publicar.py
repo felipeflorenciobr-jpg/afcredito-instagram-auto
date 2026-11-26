@@ -14,6 +14,9 @@ PAGE = "518959527965739"
 INSTAGRAM = "17841471091739370"
 REGION = "460"
 CATEGORY = "FINANCIAL_PRODUCTS_SERVICES"
+REGIONAL_CATEGORIES = ["VOLUNTARY_VERIFICATION", "GLOBAL_FINSERV"]
+BUSINESS = "518965664631792"
+ADVERTISER = {"universal_beneficiary": BUSINESS, "universal_payer": BUSINESS}
 CAMPAIGN_NAME = "AF | CP Auto Crefaz | Site | SP | Nov 2026"
 ADSET_NAME = "CP Auto | São Paulo | Feeds | R$30/dia"
 AD_NAME = "CP Auto | Carro quitado | Arte 4:5"
@@ -74,6 +77,8 @@ def verify_adset(adset):
         raise RuntimeError("A região efetiva do conjunto não corresponde ao estado de São Paulo.")
     if int(adset["daily_budget"]) != DAILY_BUDGET or adset["destination_type"] != "WEBSITE":
         raise RuntimeError("Orçamento ou destino não corresponde à campanha solicitada.")
+    if adset.get("regional_regulation_identities") != ADVERTISER:
+        raise RuntimeError("A Meta não confirmou o beneficiário e pagador verificados da AF Crédito.")
     if datetime.strptime(adset["end_time"], "%Y-%m-%dT%H:%M:%S%z") <= datetime.now(timezone.utc):
         raise RuntimeError("O conjunto atingiu a data de término.")
 
@@ -119,7 +124,7 @@ def publish():
     print(f"CAMPAIGN_ID={campaign_id}", flush=True)
     if campaign["objective"] != "OUTCOME_TRAFFIC" or campaign["special_ad_categories"] != [CATEGORY] or campaign["special_ad_category_country"] != ["BR"]:
         raise RuntimeError("A campanha existente não corresponde ao objetivo e à categoria solicitados.")
-    adset_fields = "id,name,status,daily_budget,targeting,destination_type,end_time"
+    adset_fields = "id,name,status,daily_budget,targeting,destination_type,end_time,regional_regulation_identities"
     adset = find_named(f"{campaign_id}/adsets", ADSET_NAME, adset_fields)
     if adset is None:
         end = datetime.now(timezone.utc) + timedelta(days=7)
@@ -127,7 +132,8 @@ def publish():
             f"{ACCOUNT}/adsets", "POST", name=ADSET_NAME, campaign_id=campaign_id,
             status="ACTIVE", daily_budget=DAILY_BUDGET, end_time=end.isoformat(timespec="seconds"),
             billing_event="IMPRESSIONS", optimization_goal="LINK_CLICKS", bid_strategy="LOWEST_COST_WITHOUT_CAP",
-            destination_type="WEBSITE",
+            destination_type="WEBSITE", regional_regulated_categories=REGIONAL_CATEGORIES,
+            regional_regulation_identities=ADVERTISER,
             targeting={"geo_locations": {"regions": [{"key": REGION}]}, "publisher_platforms": ["facebook", "instagram"],
                        "facebook_positions": ["feed"], "instagram_positions": ["stream"],
                        "targeting_automation": {"advantage_audience": 1}},
