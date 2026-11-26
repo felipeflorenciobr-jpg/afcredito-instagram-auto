@@ -76,7 +76,7 @@ def update():
         creative_id = create_placement_creative(original)
         print(f"CREATIVE_ID={creative_id}", flush=True)
         graph(AD, "POST", creative={"creative_id": creative_id})
-    elif ad["creative"].get("name") != CREATIVE_NAME:
+    elif not ad["creative"].get("name", "").startswith(CREATIVE_NAME):
         raise RuntimeError("O criativo original foi substituído desde a última verificação.")
 
     verified = graph(AD, fields=AD_FIELDS)
